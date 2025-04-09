@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TODO List</title>
+  <style>
+    /* Pretendard 폰트 설정 */
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background-color: #f7f7f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background-color: #fff;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .input-area {
+      display: flex;
+      margin-bottom: 20px;
+    }
+
+    .input-area input {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .input-area button {
+      padding: 10px 15px;
+      margin-left: 10px;
+      background-color: #5c6bc0;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .input-area button:hover {
+      background-color: #3f51b5;
+    }
+
+    .todo-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .todo-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .todo-item.completed {
+      text-decoration: line-through;
+      color: #bbb;
+    }
+
+    .todo-item button {
+      background-color: transparent;
+      border: none;
+      color: #ff5252;
+      cursor: pointer;
+    }
+
+    .todo-item button:hover {
+      color: #ff1744;
+    }
+
+    /* 저장 버튼 */
+    #save-btn {
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #save-btn:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="todo-container">
+    <h1>TODO List</h1>
+    <div class="input-area">
+      <input type="text" id="todo-input" placeholder="할 일을 입력하세요">
+      <button id="add-btn">추가</button>
+    </div>
+    <ul id="todo-list" class="todo-list"></ul>
+    <button id="save-btn">이미지로 저장</button>
+  </div>
+
+  <!-- html2canvas 라이브러리 추가 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
+  <script>
+    // 할 일 추가
+    document.getElementById('add-btn').addEventListener('click', addTodo);
+
+    function addTodo() {
+      const input = document.getElementById('todo-input');
+      const todoText = input.value.trim();
+      
+      if (todoText !== '') {
+        const todoList = document.getElementById('todo-list');
+        const li = document.createElement('li');
+        li.classList.add('todo-item');
+        li.innerHTML = `
+          <span class="todo-text">${todoText}</span>
+          <div>
+            <button class="check-btn">✔️</button>
+            <button class="delete-btn">🗑️</button>
+          </div>
+        `;
+
+        todoList.appendChild(li);
+
+        // 입력 필드 초기화
+        input.value = '';
+      }
+    }
+
+    // 할일 체크/완료
+    document.getElementById('todo-list').addEventListener('click', function(e) {
+      if (e.target.classList.contains('check-btn')) {
+        const todoItem = e.target.closest('.todo-item');
+        todoItem.classList.toggle('completed');
+      }
+    });
+
+    // 할일 삭제
+    document.getElementById('todo-list').addEventListener('click', function(e) {
+      if (e.target.classList.contains('delete-btn')) {
+        const todoItem = e.target.closest('.todo-item');
+        todoItem.remove();
+      }
+    });
+
+    // TODO 리스트를 이미지로 저장
+    document.getElementById('save-btn').addEventListener('click', function() {
+      html2canvas(document.getElementById('todo-container')).then(function(canvas) {
+        // 이미지로 변환한 캔버스를 다운로드
+        const link = document.createElement('a');
+        link.download = 'todo-list.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    });
+  </script>
+
+</body>
+</html>
